@@ -1,0 +1,32 @@
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+featureGates: {"ImageVolume":true}
+nodes:
+- role: control-plane
+  image: ghcr.io/liangyuanpeng/kindest/node:v1.31.0-crio-main-36c2750916eb9e75f01a627463c2cfad207f192d
+  kubeadmConfigPatches:
+  - |
+    kind: InitConfiguration
+    nodeRegistration:
+      criSocket: unix:///var/run/crio/crio.sock
+  - |
+    kind: JoinConfiguration
+    nodeRegistration:
+      criSocket: unix:///var/run/crio/crio.sock
+  - |
+    apiVersion: kubelet.config.k8s.io/v1beta1
+    kind: KubeletConfiguration
+    featureGates: 
+      ImageVolume: true
+- role: worker
+  image: ghcr.io/liangyuanpeng/kindest/node:v1.31.0-crio-main-36c2750916eb9e75f01a627463c2cfad207f192d
+  kubeadmConfigPatches:
+  - |
+    kind: JoinConfiguration
+    nodeRegistration:
+      criSocket: unix:///var/run/crio/crio.sock
+  - |
+    apiVersion: kubelet.config.k8s.io/v1beta1
+    kind: KubeletConfiguration
+    featureGates: 
+      ImageVolume: true
